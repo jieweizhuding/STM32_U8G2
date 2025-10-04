@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "gpio.h": "c",
+    "winapifamily.h": "c",
+    "main.h": "c",
+    "stm32f1xx_hal.h": "c",
+    "i2c.h": "c",
+    "u8g2.h": "c",
+    "delay.h": "c"
+  }
+}
