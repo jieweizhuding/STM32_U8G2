@@ -42,14 +42,21 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+
+file(GLOB_RECURSE U8G2 ./Core/Ext/u8g2/*.c)
+file(GLOB_RECURSE User ./Core/User/Src/*.c)
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    ${U8G2}
+    ${User}
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    ./Core/Ext/u8g2
+    ./Core/User/Inc
 )
 
 # Add project symbols (macros)

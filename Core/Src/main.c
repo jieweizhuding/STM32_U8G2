@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "u8g2.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,15 +90,21 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-
+  u8g2_t u8g2;
+  u8g2Init(&u8g2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    u8g2_FirstPage(&u8g2);
+    do {
+      u8g2_SetFont(&u8g2, u8g2_font_ncenB08_tr);
+      u8g2_DrawStr(&u8g2, 0,10,"Hello World!");
+      u8g2_DrawStr(&u8g2, 0,30,"U8g2 on STM32");
+    } while (u8g2_NextPage(&u8g2));
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
