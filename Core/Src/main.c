@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -45,7 +46,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+u8g2_t u8g2;
+uint8_t receiveData[10];
+uint8_t uartDataReady = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,7 +70,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -89,22 +91,28 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C2_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  u8g2_t u8g2;
   u8g2Init(&u8g2);
+  HAL_UARTEx_ReceiveToIdle_IT(&huart1,receiveData,sizeof(receiveData));
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    u8g2_FirstPage(&u8g2);
-    do {
-      u8g2_SetFont(&u8g2, u8g2_font_ncenB08_tr);
-      u8g2_DrawStr(&u8g2, 0,10,"Hello World!");
-      u8g2_DrawStr(&u8g2, 0,30,"U8g2 on STM32");
-    } while (u8g2_NextPage(&u8g2));
+    // HAL_UART_Transmit(&huart1, receiveData,2, 100);
+    if (uartDataReady)
+        {
+            uartDataReady = 0;
+            u8g2_FirstPage(&u8g2);
+            do {
+                u8g2_SetFont(&u8g2, u8g2_font_ncenB08_tr);
+                u8g2_DrawStr(&u8g2, 0, 20, (char*)receiveData);
+            } while (u8g2_NextPage(&u8g2));
+        }
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -150,7 +158,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
+  if(huart==&huart1){
+    HAL_UART_Transmit(&huart1,receiveData,sizeof(receiveData),100);
+    uartDataReady=1;
+    HAL_UARTEx_ReceiveToIdle_IT(&huart1,receiveData,sizeof(receiveData));
+  }
+}
 /* USER CODE END 4 */
 
 /**
